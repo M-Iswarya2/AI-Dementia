@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - DementiaAI</title>
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h2>Register</h2>
+            
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'register' %}" class="auth-form">
+                {% csrf_token %}
+                
+                <input
+                    type="text"
+                    name="full_name"
+                    placeholder="Full Name"
+                    value="{{ form_data.full_name|default:'' }}"
+                    required
+                />
+                {% if errors.full_name %}
+                    <p class="error">{{ errors.full_name }}</p>
+                {% endif %}
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value="{{ form_data.email|default:'' }}"
+                    required
+                />
+                {% if errors.email %}
+                    <p class="error">{{ errors.email }}</p>
+                {% endif %}
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    value="{{ form_data.username|default:'' }}"
+                    required
+                />
+                {% if errors.username %}
+                    <p class="error">{{ errors.username }}</p>
+                {% endif %}
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                />
+                {% if errors.password %}
+                    <p class="error">{{ errors.password }}</p>
+                {% endif %}
+
+                <input
+                    type="password"
+                    name="confirm_password"
+                    placeholder="Confirm Password"
+                    required
+                />
+                {% if errors.confirm_password %}
+                    <p class="error">{{ errors.confirm_password }}</p>
+                {% endif %}
+
+                <input
+                    type="text"
+                    name="phone"
+                    placeholder="Phone Number (10 digits)"
+                    value="{{ form_data.phone|default:'' }}"
+                    pattern="[0-9]{10}"
+                    required
+                />
+                {% if errors.phone %}
+                    <p class="error">{{ errors.phone }}</p>
+                {% endif %}
+
+                <button type="submit">Register</button>
+            </form>
+
+            <p class="login-text">
+                Already have an account? <a href="{% url 'login' %}">Login</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

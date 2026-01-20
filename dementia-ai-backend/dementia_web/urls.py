@@ -1,0 +1,33 @@
+from django.contrib import admin
+from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+from . import views
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    
+    # Public Pages
+    path("", views.home, name="index"),
+    path("home/", views.home, name="home"),
+    path("about/", views.about, name="about"),
+    path("instructions/", views.instructions, name="instructions"),
+    
+    # Authentication
+    path("login/", views.login_view, name="login"),
+    path("register/", views.register_view, name="register"),
+    path("logout/", views.logout_view, name="logout"),
+    
+    # Dashboard & Tests (Protected) - Only HTML pages
+    path("dashboard/", views.dashboard, name="dashboard"),
+    path("memory-test/", views.memory_test, name="memory_test"),
+    path("memory-select/", views.memory_select, name="memory_select"),
+    path("attention-test/", views.attention_test, name="attention_test"),
+    path("voice-test/", views.voice_test, name="voice_test"),
+    path("questions/", views.questions, name="questions"),
+    path("results/", views.results, name="results"),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0] if settings.STATICFILES_DIRS else settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
