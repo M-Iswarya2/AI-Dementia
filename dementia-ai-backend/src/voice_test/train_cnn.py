@@ -45,7 +45,7 @@ def extract_mfcc(file_path):
 
     return mfcc
 
-# ================= LOAD DATA =================
+
 X, y = [], []
 
 for label in ["dementia", "no_dementia"]:
@@ -64,7 +64,6 @@ X = X[..., np.newaxis]  # (samples, time, mfcc, 1)
 le = LabelEncoder()
 y = le.fit_transform(y)
 
-# ================= SPLIT =================
 X_train, X_test, y_train, y_test = train_test_split(
     X, y,
     test_size=0.2,
@@ -72,7 +71,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
-# ================= MODEL =================
 model = Sequential([
     Conv2D(32, (3, 3), activation="relu", padding="same",
            input_shape=(MAX_LEN, N_MFCC, 1)),
@@ -103,7 +101,7 @@ model.compile(
 
 model.summary()
 
-# ================= TRAIN =================
+
 history = model.fit(
     X_train, y_train,
     validation_split=0.1,
@@ -112,16 +110,15 @@ history = model.fit(
     verbose=1
 )
 
-# ================= EVALUATE =================
+
 loss, acc = model.evaluate(X_test, y_test)
 print(f"\n✅ Test Accuracy: {acc * 100:.2f}%")
 
 model.save("dementia_cnn_bilstm.h5")
-# ================= PREDICTIONS =================
+
 y_pred_prob = model.predict(X_test)
 y_pred = (y_pred_prob > 0.5).astype(int).ravel()
 
-# ================= METRICS =================
 precision = precision_score(y_test, y_pred)
 recall = recall_score(y_test, y_pred)
 f1 = f1_score(y_test, y_pred)
@@ -131,12 +128,11 @@ print(f"Precision : {precision:.4f}")
 print(f"Recall    : {recall:.4f}")
 print(f"F1-score  : {f1:.4f}")
 
-# ================= CONFUSION MATRIX =================
+
 cm = confusion_matrix(y_test, y_pred)
 print("\n🧩 Confusion Matrix:")
 print(cm)
 
-# ================= DETAILED REPORT =================
 print("\n📄 Classification Report:")
 print(classification_report(
     y_test,
