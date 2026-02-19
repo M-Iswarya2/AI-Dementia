@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - DementiaAI{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-card">
+        <!-- Top Section -->
+        <div class="top-section">
+            <div class="avatar">{{ user.username|slice:":2"|upper }}</div>
+            <div class="patient-info">
+                <h2>{{ user.get_full_name|default:user.username }}</h2>
+                <p>Patient ID: #{{ user.id }} • mail: {{ user.email }}</p>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-dashboard" class="loading-section">
+            <div class="spinner"></div>
+            <p>Loading your data...</p>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboard-content" style="display: none;">
+            <!-- Stats Row -->
+            <div class="stats">
+                <div class="stat-box current-risk">
+                    <p class="label">CURRENT RISK</p>
+                    <p class="value" id="current-risk">--</p>
+                    <p class="score" id="risk-score-text">Score: -- / 100</p>
+                </div>
+
+                <div class="stat-box">
+                    <p class="label">LAST ASSESSMENT</p>
+                    <p class="value" id="last-assessment">--</p>
+                    <p class="score" id="last-assessment-date">--</p>
+                </div>
+
+                <div class="stat-box">
+                    <p class="label">TOTAL ASSESSMENTS</p>
+                    <p class="value" id="total-assessments">--</p>
+                    <p class="score" id="total-assessments-info">--</p>
+                </div>
+
+                <div class="stat-box">
+                    <p class="label">TREND</p>
+                    <p class="value" id="trend">--</p>
+                    <p class="score" id="trend-info">--</p>
+                </div>
+            </div>
+
+            <!-- Assessment History -->
+            <div class="history">
+                <h3>Assessment History</h3>
+                <div class="history-box">
+                    <div id="history-content">
+                        <p class="no-data">No history available</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function fetchDashboardData() {
+    try {
+        const response = await fetch('/assessments/dashboard-data/', {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        if (!response.ok) throw new Error('Failed to fetch dashboard data');
+        const data = await response.json();
+        displayDashboardData(data);
+    } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        showError();
+    }
+}
+
+function displayDashboardData(data) {
+    // Hide loading, show content
+    document.getElementById('loading-dashboard').style.display = 'none';
+    document.getElementById('dashboard-content').style.display = 'block';
+
+    // Convert risk score to % for display
+    const riskScore = parseFloat(data.risk_score || 0) * 100;
+
+    // Higher score = lower risk
+    let riskLabel = '';
+    if (riskScore >= 75) riskLabel = 'Low';
+    else if (riskScore >= 50) riskLabel = 'Medium';
+    else riskLabel = 'High';
+
+    document.getElementById('current-risk').textContent = riskLabel;
+    document.getElementById('risk-score-text').textContent = `Score: ${riskScore.toFixed(1)} / 100`;
+
+    // Style risk box
+    const riskBox = document.querySelector('.current-risk');
+    if (riskLabel === 'Low') {
+        riskBox.style.borderColor = '#4CAF50';
+        document.getElementById('current-risk').style.color = '#4CAF50';
+    } else if (riskLabel === 'Medium') {
+        riskBox.style.borderColor = '#FF9800';
+        document.getElementById('current-risk').style.color = '#FF9800';
+    } else {
+        riskBox.style.borderColor = '#F44336';
+        document.getElementById('current-risk').style.color = '#F44336';
+    }
+
+    // Last assessment info
+    document.getElementById('last-assessment').textContent = data.last_assessment_type || 'None';
+    document.getElementById('last-assessment-date').textContent = data.last_assessment_date || '--';
+
+    // Total assessments
+    document.getElementById('total-assessments').textContent = data.total_assessments || '0';
+    document.getElementById('total-assessments-info').textContent = `${data.completed_this_month || 0} this month`;
+
+    // Trend
+    document.getElementById('trend').textContent = data.trend || '--';
+    document.getElementById('trend-info').textContent = data.trend_change || '--';
+
+    // Assessment History
+    if (data.assessment_history && data.assessment_history.length > 0) {
+        const historyHTML = `
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Risk Level</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.assessment_history.map(item => `
+                        <tr>
+                            <td>${item.date}</td>
+                            <td>${item.type}</td>
+                            <td><span class="risk-badge ${item.risk.toLowerCase()}">${item.risk}</span></td>
+                            <td><strong>${(item.score*100).toFixed(1)}</strong></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+        document.getElementById('history-content').innerHTML = historyHTML;
+    }
+}
+
+function showError() {
+    document.getElementById('loading-dashboard').innerHTML = `
+        <div class="error-message">
+            <p style="color: #e74c3c; font-weight: 600;">Error loading dashboard</p>
+            <p style="color: #7f8c8d;">Unable to fetch your data. Please try again.</p>
+            <button onclick="location.reload()" class="retry-btn">Retry</button>
+        </div>
+    `;
+}
+
+window.addEventListener('load', fetchDashboardData);
+</script>
+{% endblock %}

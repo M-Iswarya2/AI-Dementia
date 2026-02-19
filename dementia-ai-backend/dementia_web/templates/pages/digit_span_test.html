@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Digit Span Test - DementiaAI{% endblock %}
+
+{% block content %}
+<div class="test-container">
+    <div class="test-card">
+        <h2>Digit Span Memory Test</h2>
+        <p>Memorize the numbers shown. After they disappear, type them exactly in the same order.</p>
+
+        <div id="digit-display" class="digit-display">Press Start</div>
+        <input type="text" id="user-input" class="digit-input" placeholder="Enter digits here" disabled>
+
+        <div class="button-group">
+            <button id="start-btn" class="start-btn">Start</button>
+            <button id="submit-btn" class="submit-btn" disabled>Submit</button>
+        </div>
+
+        <div id="feedback" class="feedback"></div>
+        <div id="round-info" class="round-info"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentLength = 3;
+const maxRounds = 5;
+
+let round = 0;
+let forwardCorrect = 0;
+let backwardCorrect = 0;
+
+let mode = "forward"; // "forward" or "backward"
+let currentDigits = "";
+
+const display = document.getElementById("digit-display");
+const input = document.getElementById("user-input");
+const startBtn = document.getElementById("start-btn");
+const submitBtn = document.getElementById("submit-btn");
+const feedback = document.getElementById("feedback");
+const roundInfo = document.getElementById("round-info");
+
+function generateDigits(length) {
+    let digits = "";
+    for (let i = 0; i < length; i++) {
+        digits += Math.floor(Math.random() * 10);
+    }
+    return digits;
+}
+
+function startRound() {
+    input.value = "";
+    input.disabled = true;
+    submitBtn.disabled = true;
+    feedback.textContent = "";
+
+    currentDigits = generateDigits(currentLength);
+
+    if(mode === "backward") {
+        display.textContent = currentDigits.split("").reverse().join("");
+    } else {
+        display.textContent = currentDigits;
+    }
+
+    roundInfo.textContent = `Mode: ${mode.toUpperCase()} | Round: ${round + 1} / ${maxRounds}`;
+
+    setTimeout(() => {
+        display.textContent = "Enter the digits";
+        input.disabled = false;
+        submitBtn.disabled = false;
+        input.focus();
+    }, 2000);
+}
+
+startBtn.addEventListener("click", function() {
+    round = 0;
+    forwardCorrect = 0;
+    backwardCorrect = 0;
+    currentLength = 3;
+    mode = "forward";
+    startBtn.disabled = true;
+    startRound();
+});
+
+submitBtn.addEventListener("click", function() {
+    const userAnswer = input.value.trim();
+
+    // Compare user input
+    let correctAnswer = currentDigits;
+    if(mode === "backward") {
+        correctAnswer = currentDigits.split("").reverse().join("");
+    }
+
+    if(userAnswer === correctAnswer){
+        if(mode === "forward") forwardCorrect++;
+        else backwardCorrect++;
+        feedback.textContent = "Correct!";
+        feedback.style.color = "green";
+    } else {
+        feedback.textContent = "Incorrect!";
+        feedback.style.color = "red";
+    }
+
+    round++;
+
+    if(round < maxRounds){
+        currentLength++; // increase difficulty
+        setTimeout(startRound, 1000);
+    } else if(mode === "forward"){
+        // Start backward rounds
+        mode = "backward";
+        round = 0;
+        currentLength = 3;
+        setTimeout(startRound, 1000);
+    } else {
+        finishTest();
+    }
+});
+
+function finishTest(){
+    const totalForwardBackward = forwardCorrect + backwardCorrect;
+
+    fetch("{% url 'submit_digit_span_score' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+            forward: forwardCorrect,
+            backward: backwardCorrect
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            // Redirect to Test Hub after saving score
+            window.location.href = "{% url 'take_test' %}";
+        } else {
+            alert("Error saving score.");
+        }
+    });
+}
+
+</script>
+{% endblock %}
