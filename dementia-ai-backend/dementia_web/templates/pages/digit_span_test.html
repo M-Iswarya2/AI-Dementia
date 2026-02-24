@@ -589,9 +589,18 @@
         round++;
 
         if (round < MAX_ROUNDS) {
-            currentLength++;
-            setTimeout(startRound, POST_DELAY);
-        } else if (mode === "forward") {
+
+    // Increase length but cap it per mode
+    if (mode === "forward") {
+        currentLength = Math.min(currentLength + 1, 5);
+    }
+
+    if (mode === "backward") {
+        currentLength = Math.min(currentLength + 1, 4);
+    }
+
+    setTimeout(startRound, POST_DELAY);
+} else if (mode === "forward") {
             // Switch to backward mode
             mode          = "backward";
             round         = 0;
