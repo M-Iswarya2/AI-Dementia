@@ -112,7 +112,7 @@ history = model.fit(
 loss, acc = model.evaluate(X_test, y_test)
 print(f"\n Test Accuracy: {acc * 100:.2f}%")
 
-model.save("dementia_cnn_bilstm_2.h5")
+model.save("dementia_cnn_bilstm.h5")
 
 y_pred_prob = model.predict(X_test)
 y_pred = (y_pred_prob > 0.5).astype(int).ravel()

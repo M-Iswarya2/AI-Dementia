@@ -205,6 +205,17 @@
 {% endblock %}
 
 {% block extra_js %}
+<script id="score-data" type="application/json">
+{
+    "memory": {{ memory_pct }},
+    "attention": {{ attention_pct }},
+    "digit_span": {{ digit_span_pct }},
+    "trail_b": {{ trail_b_pct }},
+    "voice": {{ voice_pct }},
+    "questionnaire": {{ questionnaire_pct }}
+}
+</script>
+
 <script>
     function animateCircle(circleId, percentage) {
         const circle = document.getElementById(circleId);
@@ -222,11 +233,13 @@
         }, 200);
     }
 
-    animateCircle('memory-circle', {{ memory_pct }});
-    animateCircle('attention-circle', {{ attention_pct }});
-    animateCircle('digit-span-circle', {{ digit_span_pct }});
-    animateCircle('trail-b-circle', {{ trail_b_pct }});
-    animateCircle('voice-circle', {{ voice_pct }});
-    animateCircle('questionnaire-circle', {{ questionnaire_pct }});
+    const scores = JSON.parse(document.getElementById('score-data').textContent);
+
+    animateCircle('memory-circle',        scores.memory);
+    animateCircle('attention-circle',     scores.attention);
+    animateCircle('digit-span-circle',    scores.digit_span);
+    animateCircle('trail-b-circle',       scores.trail_b);
+    animateCircle('voice-circle',         scores.voice);
+    animateCircle('questionnaire-circle', scores.questionnaire);
 </script>
 {% endblock %}

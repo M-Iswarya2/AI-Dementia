@@ -303,7 +303,7 @@ def submit_digit_span_score(request):
         backward = float(data.get("backward", 0))
 
         total_score = forward + backward
-        normalized_score = total_score / 13
+        normalized_score = total_score / 10
 
         status, _ = TestStatus.objects.get_or_create(user=request.user)
         status.digit_span_done = True
@@ -358,7 +358,7 @@ def submit_voice_score(request):
     if request.method == "POST":
         data = json.loads(request.body)
         score = float(data.get("score", 0))
-
+        print("VOICE SCORE RECEIVED IN DJANGO:", score)
         status, _ = TestStatus.objects.get_or_create(user=request.user)
         status.voice_done = True
         status.voice_score = score

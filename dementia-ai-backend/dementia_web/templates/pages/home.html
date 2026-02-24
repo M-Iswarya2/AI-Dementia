@@ -30,72 +30,58 @@
         </div>
     </section>
 
-    <!-- HOW IT WORKS -->
-    <section id="how-it-works" class="section how-it-works">
-        <h2>Simple, Non-Invasive Screening</h2>
-        <p class="section-subtitle">
-            Our advanced AI analyzes subtle biomarkers in your speech and
-            cognitive patterns to detect early signs of decline
-        </p>
-        
-        <div class="steps-grid">
-            <div class="step-card">
-                <div class="step-icon step-icon-1">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                </div>
-                <h3>1. Cognitive Tasks</h3>
-                <p>
-                    Complete simple memory and reaction games designed to test
-                    executive function.
-                </p>
-            </div>
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="section how-it-works">
+    <h2>How the Assessment Works</h2>
+    <p class="section-subtitle">
+        Complete cognitive and voice-based assessments in any order. 
+        Once finished, our AI combines your results to generate a 
+        personalized dementia risk analysis.
+    </p>
+    
+    <div class="steps-grid">
 
-            <div class="step-card">
-                <div class="step-icon step-icon-2">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
-                    </svg>
-                </div>
-                <h3>2. Voice Analysis</h3>
-                <p>
-                    Describe an image for 30 seconds. Our AI listens for linguistic
-                    complexity and pauses.
-                </p>
-            </div>
-
-            <div class="step-card">
-                <div class="step-icon step-icon-3">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2"/>
-                        <path d="M9 9h6v6H9z"/>
-                    </svg>
-                </div>
-                <h3>3. AI Processing</h3>
-                <p>
-                    Deep learning models analyze your data against thousands of
-                    clinical samples instantly.
-                </p>
-            </div>
-
-            <div class="step-card">
-                <div class="step-icon step-icon-4">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-                <h3>4. Instant Insights</h3>
-                <p>
-                    Receive a detailed risk report and actionable recommendations
-                    for your doctor.
-                </p>
-            </div>
+        <div class="step-card">
+            <div class="step-icon step-icon-1">🧠</div>
+            <h3>1. Cognitive Tests</h3>
+            <p>
+                Perform memory, attention, executive function, and 
+                problem-solving tasks designed for early detection.
+            </p>
         </div>
 
-        <a href="{% url 'take_test' %}" class="cta-button">
-            Start Your Assessment
-        </a>
-    </section>
+        <div class="step-card">
+            <div class="step-icon step-icon-2">🎙️</div>
+            <h3>2. Voice Assessment</h3>
+            <p>
+                Describe an image for 30 seconds. Our AI analyzes speech 
+                fluency, pauses, and linguistic complexity.
+            </p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-icon step-icon-3">📊</div>
+            <h3>3. Flexible Completion</h3>
+            <p>
+                Take assessments in any order. Your scores are securely 
+                saved and updated in real-time.
+            </p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-icon step-icon-4">🤖</div>
+            <h3>4. AI Risk Report</h3>
+            <p>
+                Our AI combines all completed tests to generate a 
+                final cognitive score and risk classification.
+            </p>
+        </div>
+
+    </div>
+
+    <a href="{% url 'take_test' %}" class="cta-button">
+        Begin Assessment
+    </a>
+</section>
 </div>
 {% endblock %}
