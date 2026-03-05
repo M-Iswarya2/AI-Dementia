@@ -108,3 +108,5 @@ LOGOUT_REDIRECT_URL = 'home'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email backend for testing
